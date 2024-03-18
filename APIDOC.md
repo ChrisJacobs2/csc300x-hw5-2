@@ -22,15 +22,15 @@ None
 
 ## Endpoint 2 - Get Jokes by Category
 **Request Format:**
-/jokebook/joke/:category?limit=number
+/jokebook/joke/:category?limit=number  
 **Request Type:**
-GET
+GET  
 **Returned Data Format**:
-JSON 
+JSON   
 **Description:**
-This endpoint returns a list of jokes from the specified category. The optional limit query parameter limits the number of jokes to return.
+This endpoint returns a list of jokes from the specified category. The optional limit query parameter limits the number of jokes to return.  
 **Example Request:**
-GET /jokebook/joke/funnyJoke?limit=2
+GET /jokebook/joke/funnyJoke?limit=2  
 **Example Response:**
 ```json
 [
@@ -49,15 +49,15 @@ If the specified category does not exist, the server responds with a 404 status 
 
 ## Endpoint 3 - Add a New Joke
 **Request Format:**
-/jokebook/joke/new
+/jokebook/joke/new  
 **Request Type:**
-POST
+POST  
 **Returned Data Format**:
-JSON 
+JSON   
 **Description:**
-This endpoint adds a new joke to the specified category. The joke and its response are provided in the body of the request. 
+This endpoint adds a new joke to the specified category. The joke and its response are provided in the body of the request.   
 **Example Request:**
-POST /jokebook/joke/new with body:
+POST /jokebook/joke/new with body:  
 ```json
 {
     "category": "funnyJoke",
