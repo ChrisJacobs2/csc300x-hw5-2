@@ -1,0 +1,15 @@
+body {
+    background-color: bisque;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#suggestionBox{
+    background-color: gray;
+    width: 200px;
+    color: white;
+    /* font-weight: bold; */
+}
+
+#suggestionBox > * {
+    margin: 10px;
+}
