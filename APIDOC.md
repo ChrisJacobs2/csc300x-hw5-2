@@ -64,6 +64,7 @@ POST /jokebook/joke/new with body:
     "joke": "Why don't scientists trust atoms?",
     "response": "Because they make up everything!"
 }
+```
 **Example Response:**
 ```json
 [
