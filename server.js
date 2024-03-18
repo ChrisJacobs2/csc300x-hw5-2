@@ -1,7 +1,12 @@
+// Hello Sunny!
+
+// das express und multer
 const express = require('express');
 const multer = require('multer');
+const app = express();
+const port = 3000;
 
-
+// das variables :^O
 let categories = ['funnyJoke', 'lameJoke'];
 let funnyJoke = [
     {
@@ -27,4 +32,16 @@ let lameJoke = [
         'response': 'The Exterminator'
     }
 ];
+
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+  });
+
+app.get('/jokebook/categories', (req, res) => {
+    res.json(categories);
+});
+  
+  app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+  });
 
