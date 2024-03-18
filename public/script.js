@@ -33,6 +33,17 @@ jokeButton.addEventListener('click', submitJoke);
 // Add an event listener to the search bar for input suggestions
 searchBar.addEventListener('input', updateSuggestions);
 
+
+/**
+ * Updates the suggestions displayed to the user based on the current input.
+ * If the input is not included in the allowed items, all allowed items are displayed as suggestions.
+ * Clicking on a suggestion will fill the search bar with the suggestion and clear the suggestion box.
+ * 
+ * @function
+ * @global
+ * @listens input#value
+ * @fires click
+ */
 function updateSuggestions() {
     let input = this.value;
     // Clear previous suggestions
@@ -57,7 +68,16 @@ function main() {
     initializeCategories();
 }
 
-// Function to perform the search
+/**
+ * Performs a search when the Enter key is pressed in the search bar.
+ * The search term is the current value of the search bar.
+ * After getting the search term, it calls the `displayJokes` function to display the jokes related to the search term.
+ *
+ * @function
+ * @param {Event} event - The event object, contains information about the keypress event.
+ * @listens keypress:Enter
+ * @fires displayJokes
+ */
 function performSearch(event) {
     // Check if the key pressed was Enter
     if (event.type === 'keypress' && event.key !== 'Enter') {
@@ -69,6 +89,17 @@ function performSearch(event) {
     displayJokes(searchTerm);
 }
 
+/**
+ * Submits a new joke to the server.
+ * The joke, response, and category are taken from their respective input fields.
+ * After the joke is submitted, the jokes for the category are displayed.
+ *
+ * @function
+ * @global
+ * @listens click:Submit
+ * @fires postJokeReq
+ * @fires displayJokes
+ */
 function submitJoke() {
     // Get the current value of the joke bar
     const joke = jokeBar.value;
@@ -81,6 +112,19 @@ function submitJoke() {
     });
 }
 
+/**
+ * Makes a POST request to the server to add a new joke.
+ * The joke, response, and category are sent in the body of the request.
+ * If the request is successful, the response from the server is returned.
+ * If there is an error, it is logged to the console.
+ *
+ * @function
+ * @param {string} joke - The joke to be added.
+ * @param {string} response - The response to the joke.
+ * @param {string} category - The category of the joke.
+ * @returns {Promise<Object>} The response from the server.
+ * @throws {Error} If there is an error with the request.
+ */
 function postJokeReq(joke, response, category) {
     // make a POST request to the server to add a joke
     const url = `http://localhost:${port}/jokebook/joke/new`;
@@ -100,6 +144,16 @@ function postJokeReq(joke, response, category) {
     });
 }
 
+/**
+ * Initializes the joke categories by fetching them from the server.
+ * Clears the current joke category list and then makes a GET request to the server to get the categories.
+ * For each category, a button is created with the category name and an event listener that calls `displayJokes` when clicked.
+ * If there is an error with the request, it is logged to the console.
+ *
+ * @function
+ * @global
+ * @fires displayJokes
+ */
 function initializeCategories() {
     // clear the current joke category list
     jokeCategory.innerHTML = '';
@@ -123,6 +177,17 @@ function initializeCategories() {
         });
 }
 
+/**
+ * Displays jokes based on the selected category.
+ * If the category is 'funnyJoke' or 'lameJoke', it fetches jokes from the server and displays them.
+ * Otherwise, it calls `searchForeignJokes` to fetch and display jokes from an external API.
+ * Each joke is displayed as a list item in the joke list.
+ *
+ * @function
+ * @param {string} category - The category of jokes to display.
+ * @fires getJokes
+ * @fires searchForeignJokes
+ */
 function displayJokes(category) {
     if (category !== 'funnyJoke' && category !== 'lameJoke') {
         searchForeignJokes(category);
@@ -142,6 +207,16 @@ function displayJokes(category) {
     }
 }
 
+/**
+ * Fetches jokes from the server based on the specified category.
+ * Makes a GET request to the server and returns the response as a JSON object.
+ * If there is an error with the request, it is logged to the console.
+ *
+ * @function
+ * @param {string} category - The category of jokes to fetch.
+ * @returns {Promise<Object>} The response from the server, a JSON object containing the jokes.
+ * @throws {Error} If there is an error with the request.
+ */
 function getJokes(category) {
     // make a GET request to the server to get the jokes based on category
     const url = `http://localhost:${port}/jokebook/joke/${category}`;
@@ -152,6 +227,20 @@ function getJokes(category) {
         });
 }
 
+/**
+ * Searches for jokes from a foreign API based on the specified category.
+ * The category must be in the allowedItems array, skipping the first two elements.
+ * Makes a GET request to the foreign API and for each joke, it posts the joke to the server using the `postForeignJoke` function.
+ * After all jokes are posted, it initializes the categories and displays the foreign jokes.
+ * If there is an error with the request, it is logged to the console.
+ *
+ * @function
+ * @param {string} category - The category of jokes to search.
+ * @fires postForeignJoke
+ * @fires initializeCategories
+ * @fires displayForeignJokes
+ * @throws {Error} If there is an error with the request.
+ */
 function searchForeignJokes(category) {
     // make sure that category is in allowedItems, skipping the first two elements
     if (!allowedItems.slice(2).includes(category)) {
@@ -182,6 +271,18 @@ function searchForeignJokes(category) {
         });
 }
 
+/**
+ * Posts a foreign joke to the server.
+ * The joke, response, and category are sent in the body of the POST request.
+ * If the request is successful, the response from the server is logged to the console.
+ * If there is an error with the request, it is logged to the console.
+ *
+ * @function
+ * @param {string} category - The category of the joke.
+ * @param {string} joke - The joke to be posted.
+ * @param {string} response - The response to the joke.
+ * @throws {Error} If there is an error with the request.
+ */
 function postForeignJoke(category, joke, response) {
     // make a POST request to the server to add a joke
     let data = {category: category, joke: joke, response: response};
@@ -201,6 +302,16 @@ function postForeignJoke(category, joke, response) {
     });
 }
 
+/**
+ * Displays foreign jokes based on the selected category.
+ * If the category is not in the allowedItems array, the function is skipped.
+ * Fetches an array of jokes from the server using the `getForeignJokes` function.
+ * Each joke is displayed as a list item in the joke list.
+ *
+ * @function
+ * @param {string} category - The category of jokes to display.
+ * @fires getForeignJokes
+ */
 function displayForeignJokes(category) {
     // if category is not in allowedItems, skip the function
     if (!allowedItems.includes(category)) {
@@ -219,6 +330,16 @@ function displayForeignJokes(category) {
     });
 }
 
+/**
+ * Fetches foreign jokes from the server based on the specified category.
+ * Makes a GET request to the server and returns the response as a JSON object.
+ * If there is an error with the request, it is logged to the console.
+ *
+ * @function
+ * @param {string} category - The category of jokes to fetch.
+ * @returns {Promise<Object>} The response from the server, a JSON object containing the jokes.
+ * @throws {Error} If there is an error with the request.
+ */
 function getForeignJokes(category) {
     // make a GET request to the server to get the foreign jokes based on category
     // fetch jokebook/joke/special/:category
