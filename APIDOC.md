@@ -1,15 +1,15 @@
 # *jokebook* API Documentation
 ## Endpoint 1 - Get Joke Categories
 **Request Format:**
-/jokebook/categories
+/jokebook/categories  
 **Request Type:**
-GET
+GET  
 **Returned Data Format**:
-JSON 
+JSON  
 **Description:**
-This endpoint returns a list of all joke categories.
+This endpoint returns a list of all joke categories.  
 **Example Request:**
-GET /jokebook/categories
+GET /jokebook/categories  
 **Example Response:**
 ```json
 [
