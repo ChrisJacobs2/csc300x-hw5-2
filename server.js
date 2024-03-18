@@ -37,11 +37,11 @@ let lameJoke = [
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
-
+// get categories
 app.get('/jokebook/categories', (req, res) => {
     res.json(categories);
 });
-  
+// get jokes by category
 app.get('/jokebook/joke/:category', (req, res) => {
     let category = req.params.category;
     let limit = req.query.limit;
@@ -63,11 +63,12 @@ app.get('/jokebook/joke/:category', (req, res) => {
 
     res.json(jokes);
 });
-
+// add a joke
 app.post('/jokebook/joke/new', (req, res) => {
     let category = req.body.category;
     let joke = req.body.joke;
     let response = req.body.response;
+
 
     if (!category || !joke || !response || (category !== 'funnyJoke' && category !== 'lameJoke')) {
         return res.status(400).json({error: 'Invalid or insufficient user input'});
@@ -84,4 +85,70 @@ app.post('/jokebook/joke/new', (req, res) => {
         res.json(lameJoke);
         console.log('lame joke added');
     }
+});
+
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
+app.get('/index', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
+
+
+
+// bonus section
+let anyJoke = [];         //0
+let miscJoke = [];        //1  
+let programmingJoke = []; //2
+let punJoke = [];         //3
+let spookyJoke = [];      //4
+let christmasJoke = [];   //5
+let jokebook = {
+    'Any': anyJoke,
+    'Misc': miscJoke,
+    'Programming': programmingJoke,
+    'Pun': punJoke,
+    'Spooky': spookyJoke,
+    'Christmas': christmasJoke
+};
+let allowedItems = ['Any', 'Misc', 'Programming', 'Pun', 'Spooky', 'Christmas'];
+// post a special joke from the user
+app.post('/jokebook/joke/special', (req, res) => {
+    let category = req.body.category;
+    let joke = req.body.joke;
+    let response = req.body.response;
+
+    if (!category || !joke || !response) {
+        return res.status(400).json({error: 'Invalid or insufficient user input'});
+    }
+
+    if (!allowedItems.includes(category)) {
+        return res.status(444).json({error: 'Illegal category input'});
+    }
+
+    // create temp joke JSON object
+    let newJoke = {joke: joke, response: response};
+    // add it to the jokebook
+    jokebook[category].push(newJoke); 
+    // check categories for the new category; if it's not there, add it
+    if (!categories.includes(category)) {
+        categories.push(category);
+    }
+
+    res.json(jokebook[category]);
+});
+
+// get a foreign joke
+app.get('/jokebook/joke/special/:category', (req, res) => {
+    let category = req.params.category;
+
+    // if category is not in allowedItems, error
+    if (!allowedItems.includes(category)) {
+        return res.status(445).json({error: 'Illegal category input'});
+    }
+
+    jokes = jokebook[category];
+    res.json(jokes);
+    
 });
